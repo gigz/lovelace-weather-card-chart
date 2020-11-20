@@ -136,7 +136,7 @@ class WeatherCardChart extends Polymer.Element {
           margin: 10px 0px 10px 0px;
         }
         .attributes div {
-          text-align: center;
+          text-align: left;
         }
         .conditions {
           display: flex;
@@ -250,7 +250,7 @@ class WeatherCardChart extends Polymer.Element {
     this.sunObj = 'sun.sun' in hass.states ? hass.states['sun.sun'] : null;
     this.tempObj = this.config.temp in hass.states ? hass.states[this.config.temp] : null;
     this.windObj = this.config.wind in hass.states ? hass.states[this.config.wind] : null;
-    this.forecast = this.weatherObj.attributes.forecast.slice(0,9);
+    this.forecast = this.weatherObj.attributes.forecast.slice(0, 9);
     this.windBearing = this.weatherObj.attributes.wind_bearing;
   }
 
@@ -272,7 +272,7 @@ class WeatherCardChart extends Polymer.Element {
   computeTime(time) {
     const date = new Date(time);
     return date.toLocaleTimeString(this.lang,
-      { hour:'2-digit', minute:'2-digit' }
+      { hour: '2-digit', minute: '2-digit' }
     );
   }
 
@@ -304,7 +304,7 @@ class WeatherCardChart extends Polymer.Element {
   }
 
   drawChart() {
-    var data = this.weatherObj.attributes.forecast.slice(0,9);
+    var data = this.weatherObj.attributes.forecast.slice(0, 9);
     var locale = this._hass.selectedLanguage || this._hass.language;
     var tempUnit = this._hass.config.unit_system.temperature;
     var lengthUnit = this._hass.config.unit_system.length;
@@ -328,6 +328,7 @@ class WeatherCardChart extends Polymer.Element {
     var style = getComputedStyle(document.body);
     var textColor = style.getPropertyValue('--primary-text-color');
     var dividerColor = style.getPropertyValue('--divider-color');
+
     const chartOptions = {
       type: 'bar',
       data: {
@@ -338,7 +339,7 @@ class WeatherCardChart extends Polymer.Element {
             type: 'line',
             data: tempHigh,
             yAxisID: 'TempAxis',
-            borderWidth: 2.0,
+            borderWidth: 3.0,
             lineTension: 0.4,
             pointRadius: 0.0,
             pointHitRadius: 5.0,
@@ -349,7 +350,7 @@ class WeatherCardChart extends Polymer.Element {
             type: 'line',
             data: tempLow,
             yAxisID: 'TempAxis',
-            borderWidth: 2.0,
+            borderWidth: 3.0,
             lineTension: 0.4,
             pointRadius: 0.0,
             pointHitRadius: 5.0,
@@ -413,7 +414,7 @@ class WeatherCardChart extends Polymer.Element {
               autoSkip: true,
               fontColor: textColor,
               maxRotation: 0,
-              callback: function(value, index, values) {
+              callback: function (value, index, values) {
                 var data = new Date(value).toLocaleDateString(locale,
                   { weekday: 'short' });
                 var time = new Date(value).toLocaleTimeString(locale,
@@ -432,14 +433,14 @@ class WeatherCardChart extends Polymer.Element {
               display: true,
               drawBorder: false,
               color: dividerColor,
-              borderDash: [1,3],
+              borderDash: [1, 3],
             },
             ticks: {
               display: true,
               fontColor: textColor,
-            },
-            afterFit: function(scaleInstance) {
-              scaleInstance.width = 28;
+              callback: function (value, index, values) {
+                return value + 'º';
+              },
             },
           },
           {
@@ -456,7 +457,7 @@ class WeatherCardChart extends Polymer.Element {
               suggestedMax: 20,
               fontColor: textColor,
             },
-            afterFit: function(scaleInstance) {
+            afterFit: function (scaleInstance) {
               scaleInstance.width = 15;
             },
           }],
@@ -475,7 +476,7 @@ class WeatherCardChart extends Polymer.Element {
                 minute: 'numeric',
               });
             },
-            label: function(tooltipItems, data) {
+            label: function (tooltipItems, data) {
               var label = data.datasets[tooltipItems.datasetIndex].label || '';
               if (data.datasets[2].label == label) {
                 return label + ': ' + (tooltipItems.yLabel ?
